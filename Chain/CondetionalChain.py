@@ -31,9 +31,17 @@ sentiment_chain = prompt1 | modelHuggingFace | pydanticParser
 
 
 conditional_chain = RunnableBranch(
-    (lambda x: x.sentiment == 'positive', prompt2 | modelHuggingFace | strParser),
-    (lambda x: x.sentiment == 'negative', prompt3 | modelHuggingFace | strParser),
-    (lambda x: x.sentiment == 'neutral', prompt4 | modelHuggingFace | strParser),
+    # (lambda x: x.sentiment == 'positive', prompt2 | modelHuggingFace | strParser),
+    # (lambda x: x.sentiment == 'negative', prompt3 | modelHuggingFace | strParser),
+    # (lambda x: x.sentiment == 'neutral', prompt4 | modelHuggingFace | strParser),
+     (lambda x: isinstance(x, FeedBack) and x.sentiment == "positive",
+     prompt2 | modelHuggingFace | strParser),
+
+    (lambda x: isinstance(x, FeedBack) and x.sentiment == "negative",
+     prompt3 | modelHuggingFace | strParser),
+
+    (lambda x: isinstance(x, FeedBack) and x.sentiment == "neutral",
+     prompt4 | modelHuggingFace | strParser),
     # Default branch
     RunnableLambda(lambda x: "There is no positive, negative or neutral sentiment in the feedback.")
 )
